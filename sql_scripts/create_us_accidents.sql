@@ -62,7 +62,7 @@ Astronomical_Twilight VARCHAR(255)
 /********************************************
 * Load data from the file into the mega table
 *********************************************/
-LOAD DATA INFILE 'c:/wamp64/tmp/us_accidents_full.csv' 
+LOAD DATA INFILE '/Users/alexpena/Personal/WebDev/DBProject2/US_Accidents_May19.csv' 
 INTO TABLE us_accidents_mega
 FIELDS TERMINATED BY ',' 
 LINES TERMINATED BY '\n';
@@ -71,14 +71,16 @@ LINES TERMINATED BY '\n';
 -- create the normalized tables for the database
 DROP TABLE IF EXISTS accidents;
 CREATE TABLE accidents(
-  accident_id			VARCHAR(255)	PRIMARY KEY,
-  report_source			VARCHAR(64),
+  accident_id			VARCHAR(255) PRIMARY KEY,
+  report_source			VARCHAR(64) NOT NULL,
   TMC					DECIMAL(4, 1),
-  severity				INT,
+  severity				INT NOT NULL,
   # these times probably shouldn't be strings
-  start_time			VARCHAR(255),
-  end_time 				VARCHAR(255),
-  description			VARCHAR(255)
+  start_time			VARCHAR(255) NOT NULL,
+  end_time 				VARCHAR(255) NOT NULL,
+  description			VARCHAR(255),
+  CONSTRAINT Valid_ID CHECK (accident_id LIKE "A-_%"),
+  CONSTRAINT Valid_Severity CHECK (severity IN (1, 2, 3, 4))
 );
 
 DROP TABLE IF EXISTS weather;
@@ -104,39 +106,51 @@ CREATE TABLE address(
   county				VARCHAR(64),
   state					VARCHAR(64),
   zip_code				INT(5),
-  country				VARCHAR(64)
+  country				VARCHAR(64),
+  CONSTRAINT Valid_State CHECK (state IN ('AL', 'AK', 'AZ', 'AR', 'CA', 
+											'CO', 'CT', 'DE', 'FL', 'GA', 
+                                            'HI', 'ID', 'IL', 'IN', 'IA', 
+                                            'KS', 'KY', 'LA', 'ME', 'MD',
+                                            'MA', 'MI', 'MN', 'MS', 'MO', 
+                                            'MT', 'NE', 'NV', 'NH', 'NJ', 
+                                            'NM', 'NY', 'NC', 'ND', 'OH', 
+                                            'OK', 'OR', 'PA', 'RI', 'SC', 
+                                            'SC', 'TN', 'TX', 'UT', 'VT',
+                                            'VA', 'WA', 'WV', 'WI', 'WY'))
 );
 
 DROP TABLE IF EXISTS location;
 CREATE TABLE location(
   accident_id			VARCHAR(255) PRIMARY KEY,
-  start_lat				FLOAT,
-  start_lng				FLOAT,
+  start_lat				FLOAT NOT NULL,
+  start_lng				FLOAT NOT NULL,
   end_lat				FLOAT,
   end_lng				FLOAT,
-  distance				DECIMAL(5,2),
+  distance				DECIMAL(5,2) NOT NULL,
   timezone				VARCHAR(64),
   airport_code			VARCHAR(64),
-  side					VARCHAR(64)
+  side					VARCHAR(64),
+  CONSTRAINT Valid_Side CHECK (side IN ('L', 'R'))
 );
 
 DROP TABLE IF EXISTS details;
 CREATE TABLE details(
 accident_id			VARCHAR(255) PRIMARY KEY,
-ammenity			BOOLEAN,
-bump 				BOOLEAN,
-crossing			BOOLEAN,
-give_way			BOOLEAN,
-junction			BOOLEAN, 
-no_exit				BOOLEAN, 
-railway				BOOLEAN, 
-roundabout			BOOLEAN, 
-station				BOOLEAN, 
-is_stop 			BOOLEAN,
-traffic_calming  	BOOLEAN, 
-traffic_signal		BOOLEAN, 
-turning_loop		BOOLEAN
+ammenity			BOOLEAN NOT NULL,
+bump 				BOOLEAN NOT NULL,
+crossing			BOOLEAN NOT NULL,
+give_way			BOOLEAN NOT NULL,
+junction			BOOLEAN NOT NULL, 
+no_exit				BOOLEAN NOT NULL, 
+railway				BOOLEAN NOT NULL, 
+roundabout			BOOLEAN NOT NULL, 
+station				BOOLEAN NOT NULL, 
+is_stop 			BOOLEAN NOT NULL,
+traffic_calming  	BOOLEAN NOT NULL,
+traffic_signal		BOOLEAN NOT NULL,
+turning_loop		BOOLEAN NOT NULL
 );
+
 
 -- insert values from mega table into normalized tables
 
