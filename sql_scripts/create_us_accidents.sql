@@ -8,7 +8,7 @@ USE us_accidents;
 DROP TABLE IF EXISTS us_accidents_mega;
 CREATE TABLE us_accidents_mega(
 ID	VARCHAR(255),
-Source VARCHAR(255),
+report_source VARCHAR(255),
 TMC VARCHAR(255),
 Severity	VARCHAR(255), 
 Start_Time	VARCHAR(255),
@@ -79,6 +79,7 @@ CREATE TABLE accidents(
   start_time			VARCHAR(255) NOT NULL,
   end_time 				VARCHAR(255) NOT NULL,
   description			VARCHAR(255),
+  Detail_ID				INT,
   CONSTRAINT Valid_ID CHECK (accident_id LIKE "A-_%"),
   CONSTRAINT Valid_Severity CHECK (severity IN (1, 2, 3, 4))
 );
@@ -105,7 +106,7 @@ CREATE TABLE address(
   city					VARCHAR(64),
   county				VARCHAR(64),
   state					VARCHAR(64),
-  zip_code				INT(5),
+  zip_code				VARCHAR(10),
   country				VARCHAR(64),
   CONSTRAINT Valid_State CHECK (state IN ('AL', 'AK', 'AZ', 'AR', 'CA', 
 											'CO', 'CT', 'DE', 'FL', 'GA', 
@@ -135,7 +136,7 @@ CREATE TABLE location(
 
 DROP TABLE IF EXISTS details;
 CREATE TABLE details(
-accident_id			VARCHAR(255) PRIMARY KEY,
+Detail_ID			INT PRIMARY KEY AUTO_INCREMENT,
 ammenity			BOOLEAN NOT NULL,
 bump 				BOOLEAN NOT NULL,
 crossing			BOOLEAN NOT NULL,
@@ -151,16 +152,12 @@ traffic_signal		BOOLEAN NOT NULL,
 turning_loop		BOOLEAN NOT NULL
 );
 
+-- Adding Foreign Key Constraints
 
--- insert values from mega table into normalized tables
-
-INSERT INTO accidents (accident_id, report_source, TMC, severity, start_time, end_time, description)
-SELECT ID, Source, TMC, Severity, Start_time, End_time, description 
-FROM us_accidents_mega;
-
-INSERT INTO weather(accident_id, temperature, wind_chill, humidity, pressure, visibility, wind_direction, wind_speed, precipitation, weather_condition)
-SELECT ID, Temperature, Wind_chill, Humidity, Pressure, Visibility, Wind_direction, Wind_speed, Precipitation, Weather_condition
-FROM us_accidents_mega;
+#Addding constraint for Details_Id in Accidents
+ALTER TABLE accidents
+ADD CONSTRAINT FK_DetailId
+FOREIGN KEY (Detail_ID) REFERENCES details(Detail_ID);
 
 
 
