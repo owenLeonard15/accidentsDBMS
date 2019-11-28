@@ -23,8 +23,6 @@ document.getElementById('invoice-btn').addEventListener('click', () => {
                 let newInvoiceNoCell = newRow.insertCell();
                 let newInvoiceNoText = document.createTextNode(invoices[i].invoice_number);
                 newInvoiceNoCell.appendChild(newInvoiceNoText);
-
-
             } 
         })
     }

@@ -58,11 +58,30 @@ Nautical_Twilight	VARCHAR(255),
 Astronomical_Twilight VARCHAR(255)
 );
 
+DROP TRIGGER IF EXISTS weather_insert;
+DELIMITER $$
+CREATE TRIGGER weather_insert BEFORE INSERT ON us_accidents_mega
+FOR EACH ROW
+BEGIN
+	IF NEW.wind_chill = '' THEN
+    SET NEW.wind_chill = NULL;
+    END IF;
+    IF NEW.wind_speed = '' THEN
+    SET NEW.wind_speed = 0;
+    END IF;
+    IF NEW.precipitation = '' THEN
+    SET NEW.precipitation = 0;
+    END IF;
+    IF NEW.temperature = '' THEN
+    SET NEW.temperature = NULL;
+    END IF;
+END $$
+DELIMITER ; 
 
 /********************************************
 * Load data from the file into the mega table
 *********************************************/
-LOAD DATA INFILE '/Users/alexpena/Personal/WebDev/DBProject2/US_Accidents_May19.csv' 
+LOAD DATA INFILE 'C:/wamp64/tmp/us_accidents_full.csv' 
 INTO TABLE us_accidents_mega
 FIELDS TERMINATED BY ',' 
 LINES TERMINATED BY '\n';
@@ -87,14 +106,14 @@ CREATE TABLE accidents(
 DROP TABLE IF EXISTS weather;
 CREATE TABLE weather(
   accident_id		 	VARCHAR(255) PRIMARY KEY,
-  temperature			DECIMAL(3,1),
-  wind_chill			DECIMAL(3,1),
-  humidity				DECIMAL(2,1),
+  temperature			FLOAT,
+  wind_chill			FLOAT,
+  humidity				INT,
   pressure				DECIMAL(10,2),
   visibility			INT,
   wind_direction		VARCHAR(64),
   wind_speed			DECIMAL(10, 1),
-  precipitation			DECIMAL(3,2),
+  precipitation			FLOAT,
   weather_condition		VARCHAR(64)
 );
 
@@ -137,7 +156,7 @@ CREATE TABLE location(
 DROP TABLE IF EXISTS details;
 CREATE TABLE details(
 Detail_ID			INT PRIMARY KEY AUTO_INCREMENT,
-ammenity			BOOLEAN NOT NULL,
+amenity				BOOLEAN NOT NULL,
 bump 				BOOLEAN NOT NULL,
 crossing			BOOLEAN NOT NULL,
 give_way			BOOLEAN NOT NULL,
@@ -151,6 +170,7 @@ traffic_calming  	BOOLEAN NOT NULL,
 traffic_signal		BOOLEAN NOT NULL,
 turning_loop		BOOLEAN NOT NULL
 );
+
 
 -- Adding Foreign Key Constraints
 

@@ -3,7 +3,7 @@ USE us_accidents;
 
 #	DETAILS INSERT - Will contain all possible combos of Bool Values to save space and allow 
 #for faster indexed Detail_ID lookup when grabbing for front end.
-INSERT INTO details (ammenity, bump, crossing, give_way, junction, no_exit, railway, roundabout, station, is_stop, traffic_calming, traffic_signal, turning_loop)
+INSERT INTO details (amenity, bump, crossing, give_way, junction, no_exit, railway, roundabout, station, is_stop, traffic_calming, traffic_signal, turning_loop)
 VALUES (True, True, True, True, True, True, True, True, True, True, True, True, True),
 (True, True, True, True, True, True, True, True, True, True, True, True, False),
 (True, True, True, True, True, True, True, True, True, True, True, False, True),
@@ -8198,7 +8198,7 @@ VALUES (True, True, True, True, True, True, True, True, True, True, True, True, 
 (False, False, False, False, False, False, False, False, False, False, False, False, False);
 
 #Dummy Detail_ID to allow for adding new vals before lookup.
-INSERT INTO details (Detail_ID, ammenity, bump, crossing, give_way, junction, no_exit, railway, roundabout, station, is_stop, traffic_calming, traffic_signal, turning_loop)
+INSERT INTO details (Detail_ID, amenity, bump, crossing, give_way, junction, no_exit, railway, roundabout, station, is_stop, traffic_calming, traffic_signal, turning_loop)
 VALUES (-1, True, True, True, True, True, True, True, True, True, True, True, True, True);
 
 
