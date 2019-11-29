@@ -5,130 +5,140 @@
 * script (DetailsInsert) in order to save space, said script should be run before accidents is populated.
 *********************************************************/
 
-#Before work can be done on the table all "TRUE" and "FALSE" values must be turned to "1", and "0" so they can be used for comparison.
-#amenity
+# Before work can be done on the table all "TRUE" and "FALSE" values must be turned to "1", and "0" so they can be used for comparison.
+# This will allow for them to be quickly grouped into the details table 
+# Also will help more quickly join accidents and details tables together
 
 UPDATE us_accidents_mega 
-SET amenity = '0'
-WHERE amenity = "FALSE";
+SET amenity = 0
+WHERE amenity = 'FALSE';
 
 UPDATE us_accidents_mega 
-SET amenity = '1'
-WHERE amenity = "TRUE";
+SET amenity = 1
+WHERE amenity = 'TRUE';
 
 #bump
 UPDATE us_accidents_mega 
-SET bump = '0'
-WHERE bump = "FALSE";
+SET bump = 0
+WHERE bump = 'FALSE';
 
 UPDATE us_accidents_mega 
-SET bump = '1'
-WHERE bump = "TRUE";
+SET bump = 1
+WHERE bump = 'TRUE';
 
 #crossing
 UPDATE us_accidents_mega 
-SET crossing = '0'
-WHERE crossing = "FALSE";
+SET crossing = 0
+WHERE crossing = 'FALSE';
 
 UPDATE us_accidents_mega 
-SET crossing = '1'
-WHERE crossing = "TRUE";
+SET crossing = 1
+WHERE crossing = 'TRUE';
 
 #give_way
 UPDATE us_accidents_mega 
-SET give_way = '0'
-WHERE give_way = "FALSE";
+SET give_way = 0
+WHERE give_way = 'FALSE';
 
 UPDATE us_accidents_mega 
-SET give_way = '1'
-WHERE give_way = "TRUE";
+SET give_way = 1
+WHERE give_way = 'TRUE';
 
 #junction
 UPDATE us_accidents_mega 
-SET junction = '0'
-WHERE junction = "FALSE";
+SET junction = 0
+WHERE junction = 'FALSE';
 
 UPDATE us_accidents_mega 
-SET junction = '1'
-WHERE junction = "TRUE";
+SET junction = 1
+WHERE junction = 'TRUE';
 
 #no_exit
 UPDATE us_accidents_mega 
-SET no_exit = '0'
-WHERE no_exit = "FALSE";
+SET no_exit = 0
+WHERE no_exit = 'FALSE';
 
 UPDATE us_accidents_mega 
-SET no_exit = '1'
-WHERE no_exit = "TRUE";
+SET no_exit = 1
+WHERE no_exit = 'TRUE';
 
 #railway
 UPDATE us_accidents_mega 
-SET railway = '0'
-WHERE railway = "FALSE";
+SET railway = 0
+WHERE railway = 'TRUE';
 
 UPDATE us_accidents_mega 
-SET railway = '1'
-WHERE railway = "TRUE";
+SET railway = 1
+WHERE railway = 'FALSE';
 
 #roundabout
 UPDATE us_accidents_mega 
-SET roundabout = '0'
-WHERE roundabout = "FALSE";
+SET roundabout = 0
+WHERE roundabout = 'FALSE';
 
 UPDATE us_accidents_mega 
-SET roundabout = '1'
-WHERE roundabout = "TRUE";
+SET roundabout = 1
+WHERE roundabout = 'TRUE';
 
 #station
 UPDATE us_accidents_mega 
-SET station = '0'
-WHERE station = "FALSE";
+SET station = 0
+WHERE station = 'FALSE';
 
 UPDATE us_accidents_mega 
-SET station = '1'
-WHERE station = "TRUE";
+SET station = 1
+WHERE station = 'TRUE';
 
 #is_stop
 UPDATE us_accidents_mega 
-SET is_stop = '0'
-WHERE is_stop = "FALSE";
+SET is_stop = 0
+WHERE is_stop = 'FALSE';
 
 UPDATE us_accidents_mega 
-SET is_stop = '1'
-WHERE is_stop = "TRUE";
+SET is_stop = 1
+WHERE is_stop = 'TRUE';
 
 #traffic_calming
 UPDATE us_accidents_mega 
-SET traffic_calming = '0'
-WHERE traffic_calming = "FALSE";
+SET traffic_calming = 0
+WHERE traffic_calming = 'FALSE';
 
 UPDATE us_accidents_mega 
-SET traffic_calming = '1'
-WHERE traffic_calming = "TRUE";
+SET traffic_calming = 1
+WHERE traffic_calming = 'TRUE';
 
 #traffic_signal
 UPDATE us_accidents_mega 
-SET traffic_signal = '0'
-WHERE traffic_signal = "FALSE";
+SET traffic_signal = 0
+WHERE traffic_signal = 'FALSE';
 
 UPDATE us_accidents_mega 
-SET traffic_signal = '1'
-WHERE traffic_signal = "TRUE";
+SET traffic_signal = 1
+WHERE traffic_signal = 'TRUE';
 
 #turning_loop
 UPDATE us_accidents_mega 
-SET turning_loop = '0'
-WHERE turning_loop = "FALSE";
+SET turning_loop = 0
+WHERE turning_loop = 'FALSE';
 
 UPDATE us_accidents_mega 
-SET turning_loop = '1'
-WHERE turning_loop = "TRUE";
+SET turning_loop = 1
+WHERE turning_loop = 'TRUE';
+
+# Insert into details table, removing duplicates by grouping by all values
+INSERT INTO details ( amenity, bump, crossing, give_way, junction, no_exit, railway, 
+	roundabout, station, is_stop, traffic_calming, traffic_signal, turning_loop)
+SELECT amenity, bump, crossing, give_way, junction, no_exit, railway, 
+	roundabout, station, is_stop, traffic_calming, traffic_signal, turning_loop 
+FROM us_accidents_mega
+GROUP BY
+	amenity, bump, crossing, give_way, junction, no_exit, railway, 
+	roundabout, station, is_stop, traffic_calming, traffic_signal, turning_loop;
 
 
 #	Adding to accidents should happen last b/c of foreign key, get the correct Detail_ID 
 #by joining 
 INSERT INTO accidents (accident_id, report_source, TMC, severity, start_time, end_time, description, Detail_ID)
-
 SELECT ID, report_source, TMC, Severity, Start_time, End_time, description, Detail_ID
 FROM(us_accidents_mega INNER JOIN 
 	details 
@@ -147,37 +157,59 @@ FROM(us_accidents_mega INNER JOIN
             us_accidents_mega.turning_loop = details.turning_loop
 );
 
-UPDATE us_accidents_mega
-SET humidity = null
-WHERE humidity = '';
+# weather
 
-UPDATE us_accidents_mega
-SET pressure = null
-WHERE pressure = '';
-
-UPDATE us_accidents_mega
-SET visibility = null
-WHERE visibility = '';
+DROP TRIGGER IF EXISTS weather_insert1;
+DELIMITER $$
+CREATE TRIGGER weather_insert1 BEFORE INSERT ON weather
+FOR EACH ROW
+BEGIN
+	IF NEW.humidity = '' THEN
+    SET NEW.humidity = NULL;
+    END IF;
+    IF NEW.pressure = '' THEN
+    SET NEW.pressure = NULL;
+    END IF;
+    IF NEW.visibility = '' THEN
+    SET NEW.visibility = NULL;
+    END IF;
+END $$
+DELIMITER ;
 
 INSERT INTO weather(accident_id, temperature, wind_chill, humidity, pressure, visibility, wind_direction, wind_speed, precipitation, weather_condition)
 SELECT ID, Temperature, Wind_chill, Humidity, Pressure, Visibility, Wind_direction, Wind_speed, Precipitation, Weather_condition
 FROM us_accidents_mega;
-    
-UPDATE us_accidents_mega
-SET house_number = NULL
-WHERE house_number = '';
+
+# address 
+DROP TRIGGER IF EXISTS address_insert;
+DELIMITER $$
+CREATE TRIGGER address_insert BEFORE INSERT ON address
+FOR EACH ROW
+BEGIN
+	IF NEW.house_number = '' THEN
+    SET NEW.house_number = NULL;
+    END IF;
+END $$
+DELIMITER ;
 
 INSERT INTO address (accident_id, house_num, street, city, county, state, zip_code, country)
 SELECT ID, house_number, street, city, county, state, zipcode, country
 FROM us_accidents_mega;
 
-UPDATE us_accidents_mega
-SET end_lat = NULL
-WHERE end_lat = '';
-
-UPDATE us_accidents_mega
-SET end_lng = NULL
-WHERE end_lng = '';
+# location
+DROP TRIGGER IF EXISTS location_insert;
+DELIMITER $$
+CREATE TRIGGER location_insert BEFORE INSERT ON location
+FOR EACH ROW
+BEGIN
+	IF NEW.end_lat = '' THEN
+    SET NEW.end_lat = NULL;
+    END IF;
+    IF NEW.end_lng = '' THEN
+    SET NEW.end_lng = 0;
+    END IF;
+END $$
+DELIMITER ;
 
 INSERT INTO location (accident_id, start_lat, start_lng, end_lat, end_lng, distance, timezone, airport_code, side)
 SELECT ID, start_lat, start_lng, end_lat, end_lng, distance, timezone, airport_code, side

@@ -146,7 +146,7 @@ CREATE TABLE location(
   start_lng				FLOAT NOT NULL,
   end_lat				FLOAT,
   end_lng				FLOAT,
-  distance				DECIMAL(5,2) NOT NULL,
+  distance				FLOAT NOT NULL,
   timezone				VARCHAR(64),
   airport_code			VARCHAR(64),
   side					VARCHAR(64),
