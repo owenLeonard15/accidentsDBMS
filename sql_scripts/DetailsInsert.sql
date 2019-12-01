@@ -7,9 +7,6 @@ USE us_accidents;
 #	DETAILS INSERT - Will contain all possible combos of Bool Values to save space and allow 
 #for faster indexed Detail_ID lookup when grabbing for front end.
 
-#THIS IS A GOOD IDEA BUT UNNECESSARY...
-# There are actually only 130 different combinations uses so I solved this problem
-# with a group by statement on insert into the details table and it takes a lot less time and the values are already in 1's and 0's
 INSERT INTO details (amenity, bump, crossing, give_way, junction, no_exit, railway, roundabout, station, is_stop, traffic_calming, traffic_signal, turning_loop)
 VALUES (True, True, True, True, True, True, True, True, True, True, True, True, True),
 (True, True, True, True, True, True, True, True, True, True, True, True, False),

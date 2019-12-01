@@ -125,21 +125,10 @@ UPDATE us_accidents_mega
 SET turning_loop = 1
 WHERE turning_loop = 'TRUE';
 
-# Insert into details table, removing duplicates by grouping by all values
-INSERT INTO details ( amenity, bump, crossing, give_way, junction, no_exit, railway, 
-	roundabout, station, is_stop, traffic_calming, traffic_signal, turning_loop)
-SELECT amenity, bump, crossing, give_way, junction, no_exit, railway, 
-	roundabout, station, is_stop, traffic_calming, traffic_signal, turning_loop 
-FROM us_accidents_mega
-GROUP BY
-	amenity, bump, crossing, give_way, junction, no_exit, railway, 
-	roundabout, station, is_stop, traffic_calming, traffic_signal, turning_loop;
-
-
 #	Adding to accidents should happen last b/c of foreign key, get the correct Detail_ID 
 #by joining 
 INSERT INTO accidents (accident_id, report_source, TMC, severity, start_time, end_time, description, Detail_ID)
-SELECT ID, report_source, TMC, Severity, Start_time, End_time, description, Detail_ID
+( SELECT ID, report_source, TMC, Severity, Start_time, End_time, description, Detail_ID
 FROM(us_accidents_mega INNER JOIN 
 	details 
     ON 		us_accidents_mega.amenity = details.amenity AND
@@ -155,65 +144,48 @@ FROM(us_accidents_mega INNER JOIN
             us_accidents_mega.traffic_calming = details.traffic_calming AND
             us_accidents_mega.traffic_signal = details.traffic_signal AND
             us_accidents_mega.turning_loop = details.turning_loop
-);
+) LIMIT 200000) ;
 
 # weather
+UPDATE us_accidents_mega 
+SET humidity = NULL
+WHERE humidity = '';
 
-DROP TRIGGER IF EXISTS weather_insert1;
-DELIMITER $$
-CREATE TRIGGER weather_insert1 BEFORE INSERT ON weather
-FOR EACH ROW
-BEGIN
-	IF NEW.humidity = '' THEN
-    SET NEW.humidity = NULL;
-    END IF;
-    IF NEW.pressure = '' THEN
-    SET NEW.pressure = NULL;
-    END IF;
-    IF NEW.visibility = '' THEN
-    SET NEW.visibility = NULL;
-    END IF;
-END $$
-DELIMITER ;
+UPDATE us_accidents_mega 
+SET pressure = NULL
+WHERE pressure = '';
+
+UPDATE us_accidents_mega 
+SET visibility = NULL
+WHERE visibility = '';
 
 INSERT INTO weather(accident_id, temperature, wind_chill, humidity, pressure, visibility, wind_direction, wind_speed, precipitation, weather_condition)
 SELECT ID, Temperature, Wind_chill, Humidity, Pressure, Visibility, Wind_direction, Wind_speed, Precipitation, Weather_condition
-FROM us_accidents_mega;
+FROM us_accidents_mega LIMIT 200000;
 
-# address 
-DROP TRIGGER IF EXISTS address_insert;
-DELIMITER $$
-CREATE TRIGGER address_insert BEFORE INSERT ON address
-FOR EACH ROW
-BEGIN
-	IF NEW.house_number = '' THEN
-    SET NEW.house_number = NULL;
-    END IF;
-END $$
-DELIMITER ;
+
+# address
+UPDATE us_accidents_mega 
+SET house_number = NULL
+WHERE house_number = '';
 
 INSERT INTO address (accident_id, house_num, street, city, county, state, zip_code, country)
 SELECT ID, house_number, street, city, county, state, zipcode, country
-FROM us_accidents_mega;
+FROM us_accidents_mega
+LIMIT 200000;
 
 # location
-DROP TRIGGER IF EXISTS location_insert;
-DELIMITER $$
-CREATE TRIGGER location_insert BEFORE INSERT ON location
-FOR EACH ROW
-BEGIN
-	IF NEW.end_lat = '' THEN
-    SET NEW.end_lat = NULL;
-    END IF;
-    IF NEW.end_lng = '' THEN
-    SET NEW.end_lng = 0;
-    END IF;
-END $$
-DELIMITER ;
+UPDATE us_accidents_mega 
+SET end_lat = NULL
+WHERE end_lat = '';
+
+UPDATE us_accidents_mega 
+SET end_lng = NULL
+WHERE end_lng = '';
 
 INSERT INTO location (accident_id, start_lat, start_lng, end_lat, end_lng, distance, timezone, airport_code, side)
 SELECT ID, start_lat, start_lng, end_lat, end_lng, distance, timezone, airport_code, side
-FROM us_accidents_mega;
+FROM us_accidents_mega LIMIT 200000;
 
 
 
