@@ -5,12 +5,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>US Accidents</title>
+    <style>
+        html { height: 100% }
+        body { height: 100%; margin: 0; padding: 0; font-family:sans-serif; }
+        #map-canvas { height: 80%; width: 100% }
+        h1 { position:absolute; background:black; color:white; padding:10px; font-weight:200; z-index:10000;}
+    </style>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+    <script src="/build/heatmap.js"></script>
+    <script src="/plugins/gmaps-heatmap/gmaps-heatmap.js"></script>
 </head>
 
 <body>
     <h1>US Accidents</h1> 
+    <div id='map-canvas'></div>
     <button id="accident-btn">Get Accidents</button>
-    <input type="checkbox" name="weather" value="Show Weather">Show Weather</br>
+    <a href="insert.html"><button id="insert-btn">Insert a new accident</button></a>
+    <h3>Filter by weather condition:</h3>
+    <input type="checkbox" name="rain" value="Raining">Rain</br>
     <table id="my-table" style="width: 100%">
         <thead>
             <tr>
@@ -21,12 +33,11 @@
             <tr>
                 <td>Accident ID</td>
                 <td>Description</td>
-                <td>Weather</td>
             </tr>
         </tbody>
     </table>
 </body>
-<script src="js/script.js"></script>
 
+<script src="js/script.js"></script>
 
 </html>

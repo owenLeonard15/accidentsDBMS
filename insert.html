@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>US Accidents</title>
+</head>
+
+<body>
+    <h1>US Accidents</h1> 
+    <a href="index.html"><button id="index-btn">Return to the data</button></a>
+    <form id="input-form">
+        <h2>Enter values and click submit to add an accident to the database</h2>
+        Report Source: <input type="text" name="source"><br></br>
+        Traffic Message Channel (TMC): <input type="text" name="TMC"><br></br>
+        Severity (1-4): <input type="text" name="severity"><br></br>
+        Start Time (MM/DD/YYYY H:MM): <input type="text" name="start"><br></br>
+        End Time (MM/DD/YYYY H:MM): <input type="text" name="end"><br></br>
+        Description: <input type="text" name="description"><br></br>
+
+        <input type="button" value="Submit">
+    </form>
+</body>
+<script src="js/insert.js"></script>
+</html>
