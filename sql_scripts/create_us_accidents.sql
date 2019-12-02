@@ -119,7 +119,7 @@ CREATE TABLE weather(
 
 DROP TABLE IF EXISTS address;
 CREATE TABLE address(
-  accident_id			VARCHAR(255) PRIMARY KEY,
+  accident_id			VARCHAR(255),
   house_num				INT,
   street				VARCHAR(64),
   city					VARCHAR(64),
@@ -136,12 +136,13 @@ CREATE TABLE address(
                                             'NM', 'NY', 'NC', 'ND', 'OH', 
                                             'OK', 'OR', 'PA', 'RI', 'SC', 
                                             'SC', 'TN', 'TX', 'UT', 'VT',
-                                            'VA', 'WA', 'WV', 'WI', 'WY'))
+                                            'VA', 'WA', 'WV', 'WI', 'WY')),
+	PRIMARY KEY(accident_id, house_num, street, city, county, zip_code)
 );
 
 DROP TABLE IF EXISTS location;
 CREATE TABLE location(
-  accident_id			VARCHAR(255) PRIMARY KEY,
+  accident_id			VARCHAR(255),
   start_lat				FLOAT NOT NULL,
   start_lng				FLOAT NOT NULL,
   end_lat				FLOAT,
@@ -150,7 +151,8 @@ CREATE TABLE location(
   timezone				VARCHAR(64),
   airport_code			VARCHAR(64),
   side					VARCHAR(64),
-  CONSTRAINT Valid_Side CHECK (side IN ('L', 'R'))
+  CONSTRAINT Valid_Side CHECK (side IN ('L', 'R')),
+  PRIMARY KEY(accident_id, start_lat, start_lng, end_lat, end_lng)
 );
 
 DROP TABLE IF EXISTS details;
@@ -174,10 +176,47 @@ turning_loop		BOOLEAN NOT NULL
 
 -- Adding Foreign Key Constraints
 
+
 #Addding constraint for Details_Id in Accidents
 ALTER TABLE accidents
 ADD CONSTRAINT FK_DetailId
 FOREIGN KEY (Detail_ID) REFERENCES details(Detail_ID);
+
+-- Adding In User Privilages
+
+#Three levels of User Privileges.
+
+  # dbadmin - Admin level access (only from localhost) no restrictions.
+CREATE USER dbadmin@localhost
+IDENTIFIED BY 'adminPass';
+
+SHOW GRANTS FOR dbadmin@localhost;
+
+GRANT ALL
+ON *.*
+TO dbadmin@localhost IDENTIFIED BY 'password'
+WITH GRANT OPTION;
+
+  # modifier - Is allowed to add data.
+CREATE USER modifier
+IDENTIFIED BY 'modPass';
+
+SHOW GRANTS FOR modifier;
+
+GRANT SELECT, INSERT
+ON us_accidents.*
+TO 'modifier'@'%' IDENTIFIED BY 'modPass'; 
+
+  # user - Default Access, will only have ability to select.
+CREATE USER user;
+
+SHOW GRANTS FOR user;
+
+GRANT SELECT
+ON us_accidents.*
+TO 'user'@'%';
+
+
 
 
 
