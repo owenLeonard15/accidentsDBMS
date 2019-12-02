@@ -177,10 +177,21 @@ turning_loop		BOOLEAN NOT NULL
 -- Adding Foreign Key Constraints
 
 
-#Addding constraint for Details_Id in Accidents
+	#Addding constraint for Details_Id in Accidents
 ALTER TABLE accidents
 ADD CONSTRAINT FK_DetailId
 FOREIGN KEY (Detail_ID) REFERENCES details(Detail_ID);
+
+	#Adding in Accident_ID Constraint for Location Table
+ALTER TABLE location
+ADD CONSTRAINT FK_Location_Accidents_ID
+FOREIGN KEY (accident_id) REFERENCES accidents(accident_id);
+
+	#Adding in Accident_ID Constraint for Address Table
+ALTER TABLE address
+ADD CONSTRAINT FK_Address_Accidents_ID
+FOREIGN KEY (accident_id) REFERENCES accidents(accident_id);
+
 
 -- Adding In User Privilages
 
