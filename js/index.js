@@ -16,14 +16,13 @@ connection.connect()
 
 app.get('/', (req, res) => {
   let accidents = []
-  connection.query('SELECT * FROM accidents INNER JOIN location ON accidents.accident_id = location.accident_id LIMIT 200000', function (err, result) {
+  connection.query('SELECT accident_id, description, start_lat, start_lng from accidents INNER JOIN location USING(accident_id)', function (err, result) {
     if (err) throw err
     for(let i = 0; i < result.length; i++){
       accidents.push(result[i])
     }
     res.send(JSON.stringify({"status" : 200, "error": null, "accidents": accidents}))
   })
-  console.log(accidents.length);
   }
 )
 

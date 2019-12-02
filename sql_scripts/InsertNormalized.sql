@@ -128,7 +128,7 @@ WHERE turning_loop = 'TRUE';
 #	Adding to accidents should happen last b/c of foreign key, get the correct Detail_ID 
 #by joining 
 INSERT INTO accidents (accident_id, report_source, TMC, severity, start_time, end_time, description, Detail_ID)
-( SELECT ID, report_source, TMC, Severity, Start_time, End_time, description, Detail_ID
+SELECT ID, report_source, TMC, Severity, Start_time, End_time, description, Detail_ID
 FROM(us_accidents_mega INNER JOIN 
 	details 
     ON 		us_accidents_mega.amenity = details.amenity AND
@@ -144,7 +144,7 @@ FROM(us_accidents_mega INNER JOIN
             us_accidents_mega.traffic_calming = details.traffic_calming AND
             us_accidents_mega.traffic_signal = details.traffic_signal AND
             us_accidents_mega.turning_loop = details.turning_loop
-) LIMIT 200000) ;
+);
 
 # weather
 UPDATE us_accidents_mega 
@@ -161,7 +161,7 @@ WHERE visibility = '';
 
 INSERT INTO weather(accident_id, temperature, wind_chill, humidity, pressure, visibility, wind_direction, wind_speed, precipitation, weather_condition)
 SELECT ID, Temperature, Wind_chill, Humidity, Pressure, Visibility, Wind_direction, Wind_speed, Precipitation, Weather_condition
-FROM us_accidents_mega LIMIT 200000;
+FROM us_accidents_mega;
 
 
 # address
@@ -171,8 +171,7 @@ WHERE house_number = '';
 
 INSERT INTO address (accident_id, house_num, street, city, county, state, zip_code, country)
 SELECT ID, house_number, street, city, county, state, zipcode, country
-FROM us_accidents_mega
-LIMIT 200000;
+FROM us_accidents_mega;
 
 # location
 UPDATE us_accidents_mega 
@@ -185,7 +184,7 @@ WHERE end_lng = '';
 
 INSERT INTO location (accident_id, start_lat, start_lng, end_lat, end_lng, distance, timezone, airport_code, side)
 SELECT ID, start_lat, start_lng, end_lat, end_lng, distance, timezone, airport_code, side
-FROM us_accidents_mega LIMIT 200000;
+FROM us_accidents_mega;
 
 
 
