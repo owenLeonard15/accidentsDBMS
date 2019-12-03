@@ -60,7 +60,7 @@ BEGIN
 	START TRANSACTION;
     
     
-		SET @Detail_ID =(SELECT Detail_ID
+		SET Detail_ID =(SELECT Detail_ID
 						FROM details
                         WHERE 	Amenity = details.amenity AND
 								Bump = details.bump AND
@@ -99,6 +99,53 @@ BEGIN
 		COMMIT;	
 	END	IF;	
 END$$
+
+
+#Stored Procedure for Selecting locaiton pairs when given 
+DROP PROCEDURE IF EXISTS getLocInfo;
+CREATE PROCEDURE getLocInfo(IN Amenity BOOLEAN,
+							IN Bump	BOOLEAN,
+							IN Crossing BOOLEAN,
+							IN Give_Way	BOOLEAN,
+							IN Junction	BOOLEAN,
+							IN No_Exit	BOOLEAN,
+							IN Railway	BOOLEAN,
+							IN Roundabout	BOOLEAN,
+							IN Station	BOOLEAN,
+							IN is_stop	BOOLEAN,
+							IN Traffic_Calming	BOOLEAN,
+							IN Traffic_Signal	BOOLEAN,
+							IN Turning_Loop	BOOLEAN
+						)
+BEGIN
+    	DECLARE INDetail_ID INT UNSIGNED;
+        
+        #Getting Correct Detail_ID
+		SET INDetail_ID =(SELECT Detail_ID
+				FROM details
+				WHERE 	Amenity = details.amenity AND
+						Bump = details.bump AND
+						Crossing = details.crossing AND
+						Give_Way = details.give_way AND
+						Junction = details.junction AND
+						No_Exit = details.no_exit AND
+						Railway = details.railway AND
+						Roundabout = details.roundabout AND
+						Station = details.station AND
+						is_stop = details.is_stop AND
+						Traffic_calming = details.traffic_calming AND
+						Traffic_signal = details.traffic_signal AND
+						Turning_loop = details.turning_loop);
+                        
+		#Selecting Table of records with correct Detail_ID
+		SELECT *
+        FROM(
+			(SELECT * FROM accidents
+			WHERE accidents.Detail_ID = INDetail_ID) AS cutAccidents
+			INNER JOIN location
+             ON accidents.accident_id = location.accident_id
+            );
+END $$
 
 DELIMITER ;
 
