@@ -3,8 +3,10 @@
 */
 USE us_accidents;
 
-DELIMITER $$
 DROP PROCEDURE IF EXISTS insertRecord;
+
+DELIMITER $$
+
 
 CREATE PROCEDURE insertRecord(	IN ID	VARCHAR(255),
 								IN report_source VARCHAR(255),
@@ -76,13 +78,13 @@ BEGIN
 								Turning_loop = details.turning_loop);
 
 			#Accident Insert
-		INSERT INTO accidents (accident_id, report_source, TMC, severity, start_time, end_time, description, Detail_ID)
-        VALUES(ID, report_source, TMC, Severity, Start_time, End_time, description, Detail_ID);
+		INSERT INTO accidents(accident_id, report_source, TMC, severity, start_time, end_time, description, Detail_ID)
+        VALUES(ID, Report_Source, TMC, Severity, Start_time, End_time, Description, Detail_ID);
 
 			#weather Insert
 			# {Hummidity, Pressure, Visibility} Need to be passed in as NULL not ''
 		INSERT INTO weather(accident_id, temperature, wind_chill, humidity, pressure, visibility, wind_direction, wind_speed, precipitation, weather_condition)
-        VALUES(ID, Temperature, Wind_chill, Humidity, Pressure, Visibility, Wind_direction, Wind_speed, Precipitation, Weather_condition);
+        VALUES(ID, Temperature, Wind_chill, Humidity, Pressure, Visibility, Wind_direction, Wind_speed, Precipitation, Weather_Condition);
             #address Insert
             # {House_Number} Needs to be passed in as NULL not '' 
 		INSERT INTO address (accident_id, house_num, street, city, county, state, zip_code, country)
@@ -90,10 +92,10 @@ BEGIN
             #location Insert
             # {end_lat, end_lng} Need to be passed in as NULL not ''
 		INSERT INTO location (accident_id, start_lat, start_lng, end_lat, end_lng, distance, timezone, airport_code, side)
-		VALUES(ID, start_lat, start_lng, end_lat, end_lng, distance, timezone, airport_code, side);
+		VALUES(ID, Start_Lat, Start_Lng, End_Lat, End_Lng, Distance, Timezone, Airport_Code, Side);
 			
 	IF error THEN	
-		ROLLBACK;	
+		ROLLBACK;
 	ELSE	
 		COMMIT;	
 	END	IF;	
