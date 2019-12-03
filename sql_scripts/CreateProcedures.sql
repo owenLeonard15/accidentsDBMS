@@ -4,11 +4,8 @@
 USE us_accidents;
 
 DROP PROCEDURE IF EXISTS insertRecord;
-DELIMITER $$
 
 DELIMITER $$
-
-
 CREATE PROCEDURE insertRecord(	IN ID	VARCHAR(255),
 								IN report_source VARCHAR(255),
 								IN TMC VARCHAR(255),
@@ -17,8 +14,6 @@ CREATE PROCEDURE insertRecord(	IN ID	VARCHAR(255),
 								IN End_Time VARCHAR(255),
 								IN Start_Lat	VARCHAR(255),
 								IN Start_Lng	VARCHAR(255),
-								IN End_Lat VARCHAR(255),	
-								IN End_Lng	VARCHAR(255),
 								IN Distance VARCHAR(255),
 								IN Description VARCHAR(500),
 								IN House_Number VARCHAR(255),
@@ -58,7 +53,10 @@ CREATE PROCEDURE insertRecord(	IN ID	VARCHAR(255),
 BEGIN
 	
 	DECLARE Detail_ID INT UNSIGNED;
-    
+    DECLARE error INT DEFAULT FALSE;
+    DECLARE CONTINUE HANDLER for SQLEXCEPTION
+		SET error = TRUE;
+        
 	START TRANSACTION;
     
     
@@ -93,7 +91,7 @@ BEGIN
             #location Insert
             # {end_lat, end_lng} Need to be passed in as NULL not ''
 		INSERT INTO location (accident_id, start_lat, start_lng, end_lat, end_lng, distance, timezone, airport_code, side)
-		VALUES(ID, Start_Lat, Start_Lng, End_Lat, End_Lng, Distance, Timezone, Airport_Code, Side);
+		VALUES(ID, Start_Lat, Start_Lng, NULL, NULL, Distance, Timezone, Airport_Code, Side);
 			
 	IF error THEN	
 		ROLLBACK;
@@ -103,7 +101,6 @@ BEGIN
 END$$
 
 DELIMITER ;
-
 
 
 

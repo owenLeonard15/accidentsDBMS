@@ -18,7 +18,7 @@ connection.connect();
 
 app.get('/', (req, res) => {
   let accidents = []
-  connection.query('SELECT accident_id, description, start_lat, start_lng from accidents INNER JOIN location USING(accident_id)', function (err, result) {
+  connection.query('SELECT accident_id, description, start_lat, start_lng from accidents INNER JOIN location USING(accident_id) LIMIT 1000', function (err, result) {
     if (err) throw err
     for(let i = 0; i < result.length; i++){
       accidents.push(result[i])
@@ -31,13 +31,11 @@ app.get('/', (req, res) => {
 
 app.post('/input', (req, res) => {
   let input = req.body;
-  let row = input[0];
-  console.log(row);
   
   input.forEach(row => {
       connection.query(`CALL insertRecord(
         '${row.ID}', '${row.report_source}', '${row.TMC}', '${row.Severity}', '${row.Start_Time}', 
-        '${row.End_Time}', '${row.Start_Lat}', '${row.Start_Lng}', NULL, NULL,
+        '${row.End_Time}', '${row.Start_Lat}', '${row.Start_Lng}',
         '${row.Distance}', '${row.Description}', '${row.House_Number}', '${row.Street}', '${row.Side}',
         '${row.City}', '${row.County}', '${row.State}', '${row.Zipcode}', '${row.Country}', '${row.Timezone}',
         '${row.Airport_Code}', '${row.Weather_Timestamp}', '${row.Temperature}', '${row.Wind_Chill}', 
@@ -48,13 +46,19 @@ app.post('/input', (req, res) => {
         '${row.Turning_Loop}')`,
            function (err, result) {
               if (err) throw err;
-              // console.log(result);
+              console.log(result);
         });
   });
   res.send(JSON.stringify({"status" : 200, "value": "file upload successful"}));
-
 })
 
+
+app.post('/details', (req, res) => {
+  let input = req.body;
+  console.log(input);
+  res.send(JSON.stringify({"status" : 200, "value": "updating according to details filter"}));
+
+})
 
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

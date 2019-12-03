@@ -9,7 +9,10 @@
         html { height: 100% }
         body { height: 100%; margin: 0; padding: 0; font-family:sans-serif; }
         #map-canvas { height: 80%; width: 100% }
+        button { margin: 15px }
         h1 { position:absolute; background:black; color:white; padding:10px; font-weight:200; z-index:10000;}
+        table { padding: 20px }
+        input, h3 { margin-left: 20px;}
     </style>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
     <script src="/build/heatmap.js"></script>
@@ -21,8 +24,22 @@
     <div id='map-canvas'></div>
     <button id="accident-btn">Update map</button>
     <a href="insert.html"><button id="insert-btn">Add new accidents</button></a>
-    <h3>Filter by weather condition:</h3>
-    <input type="checkbox" name="rain" value="Raining">Rain</br>
+    <h3>Filter by accident details:</h3>
+    <input class='checkbox' type="checkbox" name="amenity" value="Amenity">Amenity</br>
+    <input class='checkbox' type="checkbox" name="bump" value="Bump">Bump</br>
+    <input class='checkbox' type="checkbox" name="crossing" value="Crossing">Crossing</br>
+    <input class='checkbox' type="checkbox" name="giveway" value="Giveway">Giveway</br>
+    <input class='checkbox' type="checkbox" name="junction" value="Junction">Junction</br>
+    <input class='checkbox' type="checkbox" name="no-exit" value="no-exit">No Exit</br>
+    <input class='checkbox' type="checkbox" name="railway" value="railway">Railway</br>
+    <input class='checkbox' type="checkbox" name="roundabout" value="roundabout">Roundabout</br>
+    <input class='checkbox' type="checkbox" name="station" value="station">Station</br>
+    <input class='checkbox' type="checkbox" name="is_stop" value="is_stop">Stop</br>
+    <input class='checkbox' type="checkbox" name="traffic_calming" value="traffic_calming">Traffic Calming</br>
+    <input class='checkbox' type="checkbox" name="traffic_signal" value="traffic_signal">Traffic Signal</br>
+    <input class='checkbox' type="checkbox" name="turning_loop" value="turning_loop">Turning Loop</br>
+
+
     <table id="my-table" style="width: 100%">
         <thead>
             <tr>

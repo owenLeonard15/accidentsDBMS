@@ -33,41 +33,95 @@ heatmap = new HeatmapOverlay(map,
 
 
 document.getElementById('accident-btn').addEventListener('click', () => { 
-    fetch('http://localhost:3000/', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
+    console.log('updating map...');
+    boxes = document.getElementsByClassName('checkbox');
+    boxArray = [13 * false];
+    let isChecked = false;
+    for(let i = 0; i < boxes.length; i++){
+        boxArray[i] = boxes[i].checked;
+        if(boxes[i].checked){
+            isChecked = true;
         }
-    })
-    .then(res => res.json())
-        .then(data => {
-            let tableRef = document.getElementById('my-table');
-            let mapData = {max: 8, data: [] }
-            // this is for displaying the first 100 results in table format
-            for(let i = 0; i < 100; i++){
-                let newRow = tableRef.insertRow();
-                accidents = data.accidents;
-
-                let newAccidentIDCell = newRow.insertCell();
-                let newAccidentIDText  = document.createTextNode(accidents[i].accident_id);
-                newAccidentIDCell.appendChild(newAccidentIDText);
-
-                let newAccidentDescriptionCell = newRow.insertCell();
-                let newDescriptionText = document.createTextNode(accidents[i].description);
-                newAccidentDescriptionCell.appendChild(newDescriptionText);
-            } 
-            // adds the data to an array, then passes the array all at once to the map via setData()
-            // using the addData function to add each point individually is significantly slower
-            for(let i = 0; i < data.accidents.length; i++){
-                let dataPoint = {
-                    lat: data.accidents[i].start_lat,
-                    lng: data.accidents[i].start_lng,
-                    count: 1
-                }
-                mapData.data.push(dataPoint);
+    }
+    
+    if (!isChecked){
+        fetch('http://localhost:3000/', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
             }
-            heatmap.setData(mapData);
         })
+        .then(res => res.json())
+            .then(data => {
+                console.log('updated')
+                let tableRef = document.getElementById('my-table');
+                let mapData = {max: 8, data: [] }
+                // this is for displaying the first 100 results in table format
+                for(let i = 0; i < 100; i++){
+                    let newRow = tableRef.insertRow();
+                    accidents = data.accidents;
+
+                    let newAccidentIDCell = newRow.insertCell();
+                    let newAccidentIDText  = document.createTextNode(accidents[i].accident_id);
+                    newAccidentIDCell.appendChild(newAccidentIDText);
+
+                    let newAccidentDescriptionCell = newRow.insertCell();
+                    let newDescriptionText = document.createTextNode(accidents[i].description);
+                    newAccidentDescriptionCell.appendChild(newDescriptionText);
+                } 
+                // adds the data to an array, then passes the array all at once to the map via setData()
+                // using the addData function to add each point individually is significantly slower
+                for(let i = 0; i < data.accidents.length; i++){
+                    let dataPoint = {
+                        lat: data.accidents[i].start_lat,
+                        lng: data.accidents[i].start_lng,
+                        count: 1
+                    }
+                    mapData.data.push(dataPoint);
+                }
+                heatmap.setData(mapData);
+            })
+        }
+        else
+        {
+            fetch('http://localhost:3000/details', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(boxArray)
+                })
+                .then(res => res.json())
+                    .then(data => {
+                        console.log(data)
+                        let tableRef = document.getElementById('my-table');
+                        let mapData = {max: 8, data: [] }
+                        // this is for displaying the first 100 results in table format
+                        for(let i = 0; i < 100; i++){
+                            let newRow = tableRef.insertRow();
+                            accidents = data.accidents;
+
+                            let newAccidentIDCell = newRow.insertCell();
+                            let newAccidentIDText  = document.createTextNode(accidents[i].accident_id);
+                            newAccidentIDCell.appendChild(newAccidentIDText);
+
+                            let newAccidentDescriptionCell = newRow.insertCell();
+                            let newDescriptionText = document.createTextNode(accidents[i].description);
+                            newAccidentDescriptionCell.appendChild(newDescriptionText);
+                        } 
+                        // adds the data to an array, then passes the array all at once to the map via setData()
+                        // using the addData function to add each point individually is significantly slower
+                        for(let i = 0; i < data.accidents.length; i++){
+                            let dataPoint = {
+                                lat: data.accidents[i].start_lat,
+                                lng: data.accidents[i].start_lng,
+                                count: 1
+                            }
+                            mapData.data.push(dataPoint);
+                        }
+                        heatmap.setData(mapData);
+                    })
+        }
     }
 )
 
