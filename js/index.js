@@ -18,15 +18,14 @@ connection.connect();
 
 app.get('/', (req, res) => {
   let accidents = []
-  connection.query('SELECT accident_id, description, start_lat, start_lng from accidents INNER JOIN location USING(accident_id) LIMIT 1000', function (err, result) {
+  connection.query('SELECT accident_id, description, start_lat, start_lng from accidents INNER JOIN location USING(accident_id)', function (err, result) {
     if (err) throw err
     for(let i = 0; i < result.length; i++){
       accidents.push(result[i])
     }
     res.send(JSON.stringify({"status" : 200, "error": null, "accidents": accidents}))
   })
-  }
-)
+})
 
 
 app.post('/input', (req, res) => {
@@ -45,19 +44,26 @@ app.post('/input', (req, res) => {
         '${row.Station}', '${row.is_stop}', '${row.Traffic_Calming}', '${row.Traffic_Signal}', 
         '${row.Turning_Loop}')`,
            function (err, result) {
-              if (err) throw err;
-              console.log(result);
+              if (err) throw err
         });
   });
-  res.send(JSON.stringify({"status" : 200, "value": "file upload successful"}));
+  res.send(JSON.stringify({"status" : 200, "error": null, "value": "file upload successful"}));
 })
 
 
 app.post('/details', (req, res) => {
   let input = req.body;
-  console.log(input);
-  res.send(JSON.stringify({"status" : 200, "value": "updating according to details filter"}));
+  let accidents = []
 
+  connection.query(`CALL getLocInfo (${input[0]}, ${input[1]}, ${input[2]}, ${input[3]}, ${input[4]}, 
+    ${input[5]}, ${input[6]}, ${input[7]}, ${input[8]}, ${input[9]}, ${input[10]}, ${input[11]}, ${input[12]})`, 
+      function (err, result){
+        if (err) throw err
+        for(let i = 0; i < result.length; i++){
+          accidents.push(result[i])
+        }
+        res.send(JSON.stringify({"status" : 200, "error": null, "accidents": accidents[0]}));
+      })
 })
 
 

@@ -99,10 +99,12 @@ BEGIN
 		COMMIT;	
 	END	IF;	
 END$$
+DELIMITER ;
 
 
 #Stored Procedure for Selecting locaiton pairs when given 
 DROP PROCEDURE IF EXISTS getLocInfo;
+DELIMITER $$
 CREATE PROCEDURE getLocInfo(IN Amenity BOOLEAN,
 							IN Bump	BOOLEAN,
 							IN Crossing BOOLEAN,
@@ -138,15 +140,13 @@ BEGIN
 						Turning_loop = details.turning_loop);
                         
 		#Selecting Table of records with correct Detail_ID
-		SELECT *
-        FROM(
-			(SELECT * FROM accidents
+		SELECT accident_id, description, start_lat, start_lng 
+        FROM (
+		(SELECT * FROM accidents
 			WHERE accidents.Detail_ID = INDetail_ID) AS cutAccidents
 			INNER JOIN location
-             ON accidents.accident_id = location.accident_id
-            );
+             USING(accident_ID));
 END $$
-
 DELIMITER ;
 
 

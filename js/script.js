@@ -35,15 +35,15 @@ heatmap = new HeatmapOverlay(map,
 document.getElementById('accident-btn').addEventListener('click', () => { 
     console.log('updating map...');
     boxes = document.getElementsByClassName('checkbox');
-    boxArray = [13 * false];
+    boxArray = new Array(13).fill(0);
     let isChecked = false;
     for(let i = 0; i < boxes.length; i++){
-        boxArray[i] = boxes[i].checked;
         if(boxes[i].checked){
+            boxArray[i] = 1;
             isChecked = true;
         }
     }
-    
+    console.log(boxArray);
     if (!isChecked){
         fetch('http://localhost:3000/', {
             method: 'GET',
@@ -53,7 +53,7 @@ document.getElementById('accident-btn').addEventListener('click', () => {
         })
         .then(res => res.json())
             .then(data => {
-                console.log('updated')
+                console.log(data)
                 let tableRef = document.getElementById('my-table');
                 let mapData = {max: 8, data: [] }
                 // this is for displaying the first 100 results in table format
