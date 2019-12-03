@@ -62,7 +62,7 @@ app.post('/details', (req, res) => {
         for(let i = 0; i < result.length; i++){
           accidents.push(result[i])
         }
-        res.send(JSON.stringify({"status" : 200, "error": null, "accidents": accidents[0]}));
+        res.send(JSON.stringify({"status" : 200, "error": null, "accidents": accidents}));
       })
 })
 

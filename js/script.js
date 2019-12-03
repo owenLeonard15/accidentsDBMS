@@ -43,7 +43,6 @@ document.getElementById('accident-btn').addEventListener('click', () => {
             isChecked = true;
         }
     }
-    console.log(boxArray);
     if (!isChecked){
         fetch('http://localhost:3000/', {
             method: 'GET',
@@ -53,7 +52,6 @@ document.getElementById('accident-btn').addEventListener('click', () => {
         })
         .then(res => res.json())
             .then(data => {
-                console.log(data)
                 let tableRef = document.getElementById('my-table');
                 let mapData = {max: 8, data: [] }
                 // this is for displaying the first 100 results in table format
@@ -93,14 +91,12 @@ document.getElementById('accident-btn').addEventListener('click', () => {
                 })
                 .then(res => res.json())
                     .then(data => {
-                        console.log(data)
                         let tableRef = document.getElementById('my-table');
                         let mapData = {max: 8, data: [] }
                         // this is for displaying the first 100 results in table format
                         for(let i = 0; i < 100; i++){
                             let newRow = tableRef.insertRow();
                             accidents = data.accidents;
-
                             let newAccidentIDCell = newRow.insertCell();
                             let newAccidentIDText  = document.createTextNode(accidents[i].accident_id);
                             newAccidentIDCell.appendChild(newAccidentIDText);
