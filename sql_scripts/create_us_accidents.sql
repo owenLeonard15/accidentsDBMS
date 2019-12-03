@@ -192,6 +192,11 @@ ALTER TABLE address
 ADD CONSTRAINT FK_Address_Accidents_ID
 FOREIGN KEY (accident_id) REFERENCES accidents(accident_id);
 
+	#Adding in Accident_ID Constraint for Weather Table
+ALTER TABLE weather
+ADD CONSTRAINT FK_Weather_Accidents_ID
+FOREIGN KEY (accident_id) REFERENCES accidents(accident_id);
+
 
 -- Adding In User Privilages
 
