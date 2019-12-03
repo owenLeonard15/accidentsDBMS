@@ -3,8 +3,8 @@
 */
 USE us_accidents;
 
-DELIMITER $$
 DROP PROCEDURE IF EXISTS insertRecord;
+DELIMITER $$
 
 CREATE PROCEDURE insertRecord(	IN ID	VARCHAR(255),
 								IN report_source VARCHAR(255),
@@ -100,5 +100,7 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+
 
 
