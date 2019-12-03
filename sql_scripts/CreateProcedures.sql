@@ -4,6 +4,7 @@
 USE us_accidents;
 
 DROP PROCEDURE IF EXISTS insertRecord;
+DELIMITER $$
 
 DELIMITER $$
 
@@ -149,5 +150,7 @@ BEGIN
 END $$
 
 DELIMITER ;
+
+
 
 
