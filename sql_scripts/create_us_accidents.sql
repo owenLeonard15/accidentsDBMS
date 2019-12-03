@@ -224,13 +224,13 @@ ON us_accidents.*
 TO 'modifier'@'%' IDENTIFIED BY 'modPass'; 
 
   # user - Default Access, will only have ability to select.
-CREATE USER user;
+CREATE USER client;
 
-SHOW GRANTS FOR user;
+SHOW GRANTS FOR client;
 
 GRANT SELECT
 ON us_accidents.*
-TO 'user'@'%';
+TO 'client'@'%';
 
 
 
