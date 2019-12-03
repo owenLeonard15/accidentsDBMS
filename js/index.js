@@ -1,7 +1,7 @@
-const express = require('express')
-const app = express()
-const cors = require('cors')
-const port = 3000
+const express = require('express');
+const app = express();
+const cors = require('cors');
+const port = 3000;
 
 var mysql = require('mysql')
 var connection = mysql.createConnection({
@@ -10,9 +10,11 @@ var connection = mysql.createConnection({
   password: '',
   database: 'us_accidents'
 })
-app.use(cors())
 
-connection.connect()
+app.use(cors());
+app.use(express.json());
+
+connection.connect();
 
 app.get('/', (req, res) => {
   let accidents = []
@@ -25,6 +27,24 @@ app.get('/', (req, res) => {
   })
   }
 )
+
+app.post('/input', (req, res) => {
+  let input = req.body
+  input.forEach(row => {
+    console.log(row.ID);
+    connection.query(`CALL INSERT(${row.ID}, ${row.report_source}, ${row.TMC}, ${row.Severity}, 
+      ${row.Start_Time}), ${row.End_Time}, ${row.Start_Lat}, ${row.Start_Lng}, ${row.End_Lat}, 
+      ${row.End_Lng}, ${row.Distance}, ${row.Description}, ${row.House_Number}, ${row.Street},
+      ${row.Side}, ${row.City}, ${row.County}, ${row.State}, ${row.Zipcode}, ${row.Country},
+      ${row.Timezone}, ${row.Airport_Code}, ${row.Weather_Timestamp}, ${row.Temperature},
+      ${row.Wind_Chill}, ${row.Humidity}, ${row.Pressure}, ${row.Visibility}, ${row.Wind_Direction},
+      ${row.Wind_Speed}, ${row.Precipitation}, ${row.Weather_Condition}, ${row.Amenity}, ${row.Bump},
+      ${row.Crossing}, ${row.Give_Way}, ${row.Junction}, ${row.No_Exit}, ${row.Railway}, ${row.Roundabout},
+      ${row.Station}, ${row.is_stop}, ${row.Traffic_Calming}, ${row.Traffic_Signal}, ${row.Turning_Loop}`);
+  });
+
+  res.send(JSON.stringify({"status": 200, "value" : "file uploaded successfully"}));
+})
 
 
 
