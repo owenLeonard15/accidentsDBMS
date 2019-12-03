@@ -53,42 +53,44 @@ CREATE PROCEDURE insertRecord(	IN ID	VARCHAR(255),
 								IN Turning_Loop	VARCHAR(255)
 )
 BEGIN
+	
+	DECLARE Detail_ID INT UNSIGNED;
+    
 	START TRANSACTION;
+    
+    
+		SET @Detail_ID =(SELECT Detail_ID
+						FROM details
+                        WHERE 	Amenity = details.amenity AND
+								Bump = details.bump AND
+								Crossing = details.crossing AND
+								Give_Way = details.give_way AND
+								Junction = details.junction AND
+								No_Exit = details.no_exit AND
+								Railway = details.railway AND
+								Roundabout = details.roundabout AND
+								Station = details.station AND
+								is_stop = details.is_stop AND
+								Traffic_calming = details.traffic_calming AND
+								Traffic_signal = details.traffic_signal AND
+								Turning_loop = details.turning_loop);
+
 			#Accident Insert
 		INSERT INTO accidents (accident_id, report_source, TMC, severity, start_time, end_time, description, Detail_ID)
-		(SELECT ID, report_source, TMC, Severity, Start_time, End_time, description, Detail_ID
-		FROM(
-			(SELECT ID, report_source, TMC, Severity, Start_time, End_time, description)
-			INNER JOIN 
-			details 
-			ON 
-			Amenity = details.amenity AND
-			Bump = details.bump AND
-			Crossing = details.crossing AND
-			Give_Way = details.give_way AND
-			Junction = details.junction AND
-			No_Exit = details.no_exit AND
-			Railway = details.railway AND
-			Roundabout = details.roundabout AND
-			Station = details.station AND
-			is_stop = details.is_stop AND
-			Traffic_calming = details.traffic_calming AND
-			Traffic_signal = details.traffic_signal AND
-			Turning_loop = details.turning_loop)
-		);
+        VALUES(ID, report_source, TMC, Severity, Start_time, End_time, description, Detail_ID);
+
 			#weather Insert
 			# {Hummidity, Pressure, Visibility} Need to be passed in as NULL not ''
 		INSERT INTO weather(accident_id, temperature, wind_chill, humidity, pressure, visibility, wind_direction, wind_speed, precipitation, weather_condition)
-		(SELECT ID, Temperature, Wind_chill, Humidity, Pressure, Visibility, Wind_direction, Wind_speed, Precipitation, Weather_condition);
+        VALUES(ID, Temperature, Wind_chill, Humidity, Pressure, Visibility, Wind_direction, Wind_speed, Precipitation, Weather_condition);
             #address Insert
             # {House_Number} Needs to be passed in as NULL not '' 
 		INSERT INTO address (accident_id, house_num, street, city, county, state, zip_code, country)
-		(SELECT ID, House_Number, Street, City, County, State, Zipcode, Country);
+		VALUES (ID, House_Number, Street, City, County, State, Zipcode, Country);
             #location Insert
             # {end_lat, end_lng} Need to be passed in as NULL not ''
 		INSERT INTO location (accident_id, start_lat, start_lng, end_lat, end_lng, distance, timezone, airport_code, side)
-		(SELECT ID, start_lat, start_lng, end_lat, end_lng, distance, timezone, airport_code, side);
-			
+		VALUES(ID, start_lat, start_lng, end_lat, end_lng, distance, timezone, airport_code, side);
 			
 	IF error THEN	
 		ROLLBACK;	
@@ -96,5 +98,7 @@ BEGIN
 		COMMIT;	
 	END	IF;	
 END$$
+
+DELIMITER ;
 
 
